@@ -29,6 +29,11 @@
             $dbName = config('database.connections.mysql.database');
             $dbError = $e->getMessage();
         }
+
+        // Title text processing
+        $titleParts = explode("\n", $settings->hero_title);
+        $titleFirst = $titleParts[0] ?? 'Pantau Ribuan Stok,';
+        $titleSecond = $titleParts[1] ?? 'Tanpa Bikin Pusing.';
     @endphp
 
     <!-- NAVBAR -->
@@ -49,11 +54,15 @@
                 <a href="#harga" class="hover:text-brand-500 transition-colors">Harga</a>
             </div>
 
-            <!-- CTA Buttons (Integrated with Laravel Auth) -->
+            <!-- CTA Buttons (Integrated with Laravel Auth & Dashboard Link) -->
             <div class="hidden md:flex items-center gap-4">
+                <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-slate-500 hover:text-brand-900 transition-colors flex items-center gap-1">
+                    <i class="ph-bold ph-sliders-horizontal"></i> Admin Dashboard
+                </a>
+                
                 @if (Route::has('login'))
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-600 hover:text-brand-900 transition-colors">Dashboard</a>
+                        <a href="{{ url('/dashboard') }}" class="text-sm font-semibold text-brand-900 hover:text-brand-600 transition-colors">Client Area</a>
                     @else
                         <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-brand-900 transition-colors">Login</a>
                         @if (Route::has('register'))
@@ -62,10 +71,6 @@
                             </a>
                         @endif
                     @endauth
-                @else
-                    <a href="#harga" class="bg-brand-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-brand-500 transition-colors shadow-lg shadow-brand-900/20">
-                        Coba Gratis 14 Hari
-                    </a>
                 @endif
             </div>
             
@@ -103,12 +108,14 @@
             </div>
             
             <h1 class="text-5xl lg:text-7xl font-extrabold text-brand-900 tracking-tight leading-[1.1] mb-6 reveal delay-100">
-                Pantau Ribuan Stok,<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-teal-400">Tanpa Bikin Pusing.</span>
+                {{ $titleFirst }}<br>
+                @if($titleSecond)
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-teal-400">{{ $titleSecond }}</span>
+                @endif
             </h1>
             
             <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto font-medium reveal delay-200">
-                Tinggalkan spreadsheet manual. Kelola persediaan barang, otomatisasi laporan, dan pantau keluar-masuk stok gudang secara real-time dari satu dashboard cerdas.
+                {{ $settings->hero_subtitle }}
             </p>
             
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal delay-300">
@@ -228,7 +235,7 @@
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="p-8 rounded-2xl bg-brand-900 border border-brand-800 shadow-xl reveal delay-200 flex flex-col justify-center items-start text-left">
+                <div class="p-8 rounded-2xl bg-brand-900 border border-brand-800 shadow-xl reveal delay-200 flex flex-col justify-center items-start text-left text-white">
                     <div class="flex items-center gap-2 text-brand-500 font-semibold mb-2">
                         <i class="ph-bold ph-plug"></i> Integrasi API
                     </div>
@@ -332,7 +339,7 @@
                     <p class="text-sm text-gray-500 mb-6 font-medium">Untuk UMKM & Toko Retail kecil.</p>
                     
                     <div class="mb-6">
-                        <span class="text-4xl font-extrabold text-brand-900">Rp 149<span class="text-lg text-gray-500 font-medium">rb</span></span>
+                        <span class="text-4xl font-extrabold text-brand-900">Rp {{ $settings->price_starter }}<span class="text-lg text-gray-500 font-medium">rb</span></span>
                         <span class="text-gray-500 text-sm">/bulan</span>
                     </div>
                     
@@ -350,7 +357,7 @@
                 </div>
 
                 <!-- Tier 2: Pro (Highlighted) -->
-                <div class="bg-brand-900 rounded-3xl p-8 border border-brand-800 shadow-2xl shadow-brand-900/20 transform md:-translate-y-4 relative reveal delay-100 text-left">
+                <div class="bg-brand-900 rounded-3xl p-8 border border-brand-800 shadow-2xl shadow-brand-900/20 transform md:-translate-y-4 relative reveal delay-100 text-left text-white">
                     <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-400 to-teal-400 text-brand-950 px-4 py-1 rounded-full text-xs font-bold tracking-wide shadow-sm">
                         PALING POPULER
                     </div>
@@ -359,7 +366,7 @@
                     <p class="text-sm text-brand-100/70 mb-6 font-medium">Untuk Distributor & Bisnis Berkembang.</p>
                     
                     <div class="mb-6">
-                        <span class="text-4xl font-extrabold text-white">Rp 499<span class="text-lg text-brand-100/50 font-medium">rb</span></span>
+                        <span class="text-4xl font-extrabold text-white">Rp {{ $settings->price_pro }}<span class="text-lg text-brand-100/50 font-medium">rb</span></span>
                         <span class="text-brand-100/50 text-sm">/bulan</span>
                     </div>
                     
@@ -382,7 +389,7 @@
                     <p class="text-sm text-gray-500 mb-6 font-medium">Solusi custom untuk pabrik & korporasi.</p>
                     
                     <div class="mb-6">
-                        <span class="text-4xl font-extrabold text-brand-900">Custom</span>
+                        <span class="text-4xl font-extrabold text-brand-900">{{ $settings->price_enterprise }}</span>
                     </div>
                     
                     <a href="#" class="block w-full py-3 px-4 bg-white border border-gray-300 text-brand-900 font-semibold text-center rounded-xl hover:bg-gray-50 transition-colors mb-8">
@@ -403,7 +410,7 @@
     </section>
 
     <!-- BOTTOM CTA -->
-    <section class="py-20 px-6 bg-brand-500 relative overflow-hidden text-center">
+    <section class="py-20 px-6 bg-brand-500 relative overflow-hidden text-center text-white">
         <!-- Abstract wave background -->
         <svg class="absolute bottom-0 left-0 w-full text-brand-600 opacity-30 animate-float" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height: 100%; z-index: 0;"><path fill="currentColor" fill-opacity="1" d="M0,224L60,213.3C120,203,240,181,360,186.7C480,192,600,224,720,213.3C840,203,960,149,1080,138.7C1200,128,1320,160,1380,176L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
         
@@ -414,7 +421,7 @@
                 <a href="#" class="bg-brand-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-900 shadow-xl transition-all">
                     Daftar & Coba Gratis
                 </a>
-                <a href="#" class="bg-white/20 backdrop-blur text-white border border-white/30 px-8 py-4 rounded-xl font-bold hover:bg-white/30 transition-all flex items-center justify-center gap-2">
+                <a href="https://wa.me/{{ $settings->cta_whatsapp }}" target="_blank" class="bg-white/20 backdrop-blur text-white border border-white/30 px-8 py-4 rounded-xl font-bold hover:bg-white/30 transition-all flex items-center justify-center gap-2">
                     <i class="ph-fill ph-whatsapp text-xl"></i> Konsultasi via WA
                 </a>
             </div>
@@ -428,7 +435,7 @@
                 <a href="#" class="font-bold text-xl flex items-center gap-2 text-brand-900 mb-4">
                     <i class="ph-fill ph-package text-brand-500"></i> GudangHub
                 </a>
-                <p class="text-sm mb-6">Solusi cerdas manajemen inventori berbasis cloud untuk pebisnis modern Indonesia.</p>
+                <p class="text-sm mb-6 font-medium text-gray-500">Solusi cerdas manajemen inventori berbasis cloud untuk pebisnis modern Indonesia.</p>
                 <div class="flex gap-4 text-xl">
                     <a href="#" class="text-gray-400 hover:text-brand-500 transition-colors"><i class="ph-fill ph-linkedin-logo"></i></a>
                     <a href="#" class="text-gray-400 hover:text-brand-500 transition-colors"><i class="ph-fill ph-instagram-logo"></i></a>
