@@ -5,7 +5,12 @@ use App\Http\Controllers\DashboardController;
 use App\Models\SiteSetting;
 
 Route::get('/', function () {
-    $settings = SiteSetting::first();
+    try {
+        $settings = SiteSetting::first();
+    } catch (\Exception $e) {
+        $settings = null;
+    }
+    
     if (!$settings) {
         $settings = new SiteSetting([
             'hero_title' => "Pantau Ribuan Stok,\nTanpa Bikin Pusing.",
